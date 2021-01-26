@@ -12,6 +12,7 @@ Our aim is to investigate the prices for housing in zip codes in the area of Spr
 
 ## Exploratory Data Analysis
 todo
+
 ![prices-all](visualizations/prices-all.png)
 ![prices-year](visualizations/prices-year.png)
 
