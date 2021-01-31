@@ -62,7 +62,7 @@ def arima_analyze(data, order, initial=12*15, horizon=12, period=6, forecast_len
         ax.plot(forecast_index, forecast, ls='-', c='#0072B2')
         ax.fill_between(forecast_index, lower, upper, color='#0072B2', alpha=0.2)
         ax.set_title(f'{col}, rmse: {int(rmse)}')
-        ax.legend(labels=['actual', 'model'], loc='upper left')
+        ax.legend(labels=['actual', 'prediction'], loc='upper left')
     
     plt.tight_layout()
     if filename:
