@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from statsmodels.tsa.arima_model import ARIMA
+from statsmodels.tsa.arima.model import ARIMA
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -16,12 +16,8 @@ def arima_cross_validation(data, order, initial=12*15, horizon=12, period=6, ver
     rmses = []
     for i in range(1, k+1):
         n = len(data)-horizon-((k-i)*period)
-        try:
-            model = ARIMA(data[:n], order, freq='MS').fit()
-        except ValueError:
-            print('Unable to force stationarity for cross validation model, skipping one fold')
-            continue
-        y_hat = model.forecast(steps=horizon)[0]
+        model = ARIMA(data[:n], order=order, freq='MS').fit()
+        y_hat = model.get_forecast(steps=horizon).predicted_mean.to_numpy()
         y = data[n:n+horizon].to_numpy()
         rmse = np.sqrt(mean_squared_error(y, y_hat))
         if verbose: print(f'fold {i}: train[0:{n}], test[{n}:{n+horizon}] of {len(data)}, rmse={rmse}')
@@ -45,26 +41,32 @@ def arima_analyze(data, order, initial=12*15, horizon=12, period=6, forecast_len
         rmse = sum(rmses)/len(rmses)
         
         #run model to get 1-year forecast
+        model = ARIMA(data[col], order=order, freq='MS').fit()
+        prediction_results = model.get_prediction(start=2, typ='levels')
+        prediction = prediction_results.predicted_mean
+        prediction_conf_int = prediction_results.conf_int(alpha=0.2)
+        prediction_lower = prediction_conf_int[f'lower {col}'].tolist()
+        prediction_upper = prediction_conf_int[f'upper {col}'].tolist()
         
-        model = ARIMA(data[col], order, freq='MS').fit()
-        prediction = model.predict(typ='levels')
-        forecast_results = model.forecast(steps=forecast_length)
-        forecast = forecast_results[0]
+        forecast_results = model.get_forecast(steps=forecast_length)
+        forecast = forecast_results.predicted_mean
         forecast_df[col] = forecast
-        conf_int = forecast_results[2]
-        lower = [c[0] for c in conf_int]
-        upper = [c[1] for c in conf_int]
+        forecast_conf_int = forecast_results.conf_int(alpha=0.2)
+        forecast_lower = forecast_conf_int[f'lower {col}'].tolist()
+        forecast_upper = forecast_conf_int[f'upper {col}'].tolist()
         
         #plot data with forecast
         ax = axs[i]
         ax.plot(data.index, data[col], 'k.')
         ax.plot(data.index[-len(prediction):], prediction, ls='-', c='#0072B2')
         ax.plot(forecast_index, forecast, ls='-', c='#0072B2')
-        ax.fill_between(forecast_index, lower, upper, color='#0072B2', alpha=0.2)
+        ax.fill_between(prediction.index, prediction_lower, prediction_upper, color='#0072B2', alpha=0.2)
+        ax.fill_between(forecast_index, forecast_lower, forecast_upper, color='#0072B2', alpha=0.2)
         ax.set_title(f'{col}, rmse: {int(rmse)}')
         ax.legend(labels=['actual', 'model'], loc='upper left')
     
-    plt.suptitle('ARIMA Models', y=1.03, fontsize=30)
+    if i>1:
+        plt.suptitle('ARIMA Models', y=1.03, fontsize=30)
     plt.tight_layout()
     if filename:
         plt.savefig(f'visualizations/{filename}.png')
