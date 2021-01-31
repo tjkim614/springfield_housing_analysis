@@ -64,6 +64,7 @@ def arima_analyze(data, order, initial=12*15, horizon=12, period=6, forecast_len
         ax.set_title(f'{col}, rmse: {int(rmse)}')
         ax.legend(labels=['actual', 'model'], loc='upper left')
     
+    plt.suptitle('ARIMA Models', y=1.03, fontsize=30)
     plt.tight_layout()
     if filename:
         plt.savefig(f'visualizations/{filename}.png')
