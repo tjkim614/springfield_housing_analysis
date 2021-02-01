@@ -3,7 +3,6 @@
 
 
 ### Members
-* Taejoon Kim
 * Andrew Muller
 * Deric Williamson
 
@@ -84,10 +83,35 @@ cross-validated RMSE values:
 ![prophet-models](visualizations/prophet-models.png)
 
 ## Analysis
-todo
+
+The model for each zip code was chosen base on RMSE. The ARIMA models performed better than the Prophet models for every zip code except 65802.
+
+Zip Code | ARIMA RMSE | Prophet RMSE | Best Model
+:-- | :-- | :-- | :--
+65807	| 1731	| 3829	| ARIMA
+65802	| 3342	| 3074	| Prophet
+65804	| 2229	| 4339	| ARIMA
+65810	| 4222	| 6539	| ARIMA
+65806	| 3073	| 3740	| ARIMA
+65809	| 11553 |	13054	| ARIMA
+
+
+Choosing the correct model for each zip code, we get the following results:
+- 65809: 69.41
+- 65804: 34.19
+- 65807: 22.76
+- 65810: 11.8
+- 65802: 8.21
+- 65806: 4.32
+
+A steep slope indicates a quick rise in value in the future, indicating a good investment. Based on this, zip code 65809 would be a good investment. However, the RMSE values for that zip code's model are much higher than the others, possibly indicating a poorer accuracy forecast or more volatility. Instead, the second steepest slope, zip code 65804, should be chosen as the top investment opportunity.
 
 ## Conclusions
-todo
+
+Based on the models, we have concluded that zip code 65804 would be the best zip code for the home renovation company to invest their money in. If focusing in the 65804 area, the company should see the average housing prices continuing to increase over the next two years.
 
 ## Future Work
-todo
+
+It is important to note that these values are already old. Even our 2-year prediction is already 9 months out of date. As well, the chosen ARIMA models had apparent overfitting issues based on their prediction charts, and larger confidence intervals as well. More work would need to be done before making actual investments based on these models.
+
+More recent data would be needed in order to make this model useful for actual investments. If obtained, it could also be used as a sort of holdout dataset, verifying our current conclusions. We have also chosen a 2-year forecast range arbitrarily. In order to improve our model, we would need to perform an analysis on what range these models are most accurate over, and what time frame is useful in the field of housing investments.
