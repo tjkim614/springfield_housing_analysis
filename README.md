@@ -2,10 +2,6 @@
 # Time Series Analysis of Housing Prices in Springfield, Missouri
 
 
-### Members
-* Andrew Muller
-* Deric Williamson
-
 ## Business Case
 
 As Data Scientists working for a home renovation company, we were given the task to investigate and predict the average housing prices in the next two years using various zip codes in Springfield, MO. Using data from 1996 to 2018, we will use various time series models to determine which zip code would be the best investment to buy houses in to renovate.
